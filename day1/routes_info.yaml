@@ -1,0 +1,258 @@
+# Ingress Controller Architecture and Routes vs Ingress (OpenShift)
+
+## 1. Ingress Controller Architecture in OpenShift
+
+### Core concept
+
+In Kubernetes, an Ingress Controller handles external HTTP/HTTPS traffic.
+
+In OpenShift, this is implemented using:
+
+- Router (HAProxy-based)
+- Ingress Operator (manages router lifecycle)
+
+### Architecture Flow
+
+![Architecture diagram 1](net3.png)
+![Architecture diagram 2](net4.png)
+![Architecture diagram 3](net5.png)
+
+### Components 
+
+1. Ingress Operator
+   - Manages router deployment
+   - Handles scaling, updates, and configuration
+2. Router pods (HAProxy)
+   - Run on worker nodes
+   - Handle TLS termination, load balancing, and host/path routing
+3. Service and Pod
+   - Router forwards traffic to Service
+   - Service forwards traffic to backend Pods
+
+### Traffic flow
+
+1. User request reaches DNS.
+2. DNS resolves to Router (Ingress Controller).
+3. Router matches hostname and path.
+4. Router applies TLS behavior.
+5. Router forwards to Service.
+6. Service forwards to target Pod.
+
+### Key insight
+
+In OpenShift, the router effectively combines:
+
+- Ingress Controller
+- Load Balancer
+- TLS Gateway
+
+---
+
+## 2. Routes vs Ingress
+
+### Core difference
+
+| Feature | Route (OpenShift) | Ingress (Kubernetes standard) |
+| --- | --- | --- |
+| Native to OpenShift | Yes | No |
+| Simplicity | Very simple | More generic |
+| TLS support | Built-in and advanced | Requires controller-specific config |
+| Features | Rich (`edge`, `re-encrypt`, `passthrough`) | More limited by default |
+| Controller | OpenShift Router | Depends on chosen Ingress controller |
+
+### What is a Route?
+
+An OpenShift-specific API object used to expose Services externally.
+
+Example:
+
+```yaml
+kind: Route
+spec:
+  host: app.example.com
+  to:
+    kind: Service
+    name: my-app
+```
+
+### What is Ingress?
+
+A standard Kubernetes API object for HTTP/HTTPS routing.
+
+Example:
+
+```yaml
+kind: Ingress
+spec:
+  rules:
+    - host: app.example.com
+```
+
+### Practical guidance
+
+In OpenShift environments:
+
+- Routes are typically preferred.
+- Ingress is supported, but usually less feature-rich than Routes on OpenShift.
+
+### Real-world usage
+
+- OpenShift-centric enterprise environments: prefer Routes
+- Multi-cloud portability scenarios: prefer Ingress
+
+---
+
+## 3. TLS Termination Types (Critical)
+
+This is a key OpenShift router capability.
+
+<img src="route1.png">
+
+
+### 3.1 Edge Termination
+
+#### Concept
+
+TLS terminates at the OpenShift Router.
+
+Flow:
+
+1. Client sends HTTPS request to Router.
+2. Router decrypts TLS.
+3. Router forwards plain HTTP to backend Service/Pod.
+
+#### Behavior
+
+- Router handles certificate and TLS negotiation.
+- Backend receives unencrypted HTTP.
+
+#### Typical use cases
+
+- Internal applications
+- Performance-sensitive workloads
+
+#### Risk
+
+- Traffic inside the cluster is not encrypted between Router and backend.
+
+### 3.2 Re-encrypt Termination
+
+#### Concept
+
+TLS terminates at the Router and is re-established from Router to backend.
+
+Flow:
+
+1. Client sends HTTPS to Router.
+2. Router decrypts traffic.
+3. Router re-encrypts traffic to backend using backend TLS cert.
+
+#### Behavior
+
+- Router performs TLS termination and re-encryption.
+- Backend certificate validation is supported.
+
+#### Typical use cases
+
+- Banking and highly secure applications
+- Compliance-driven environments requiring encryption in transit end-to-end
+
+### 3.3 Passthrough Termination
+
+#### Concept
+
+Router does not terminate TLS; TLS remains end-to-end between client and backend.
+
+Flow:
+
+1. Client establishes HTTPS session.
+2. Router forwards TCP stream without decrypting payload.
+3. Backend terminates TLS.
+
+#### Behavior
+
+- Router performs L4 forwarding only.
+- No TLS inspection or HTTP-level processing at the router.
+
+#### Typical use cases
+
+- mTLS applications
+- Custom TLS handling
+- gRPC and advanced protocol scenarios
+
+#### Limitations
+
+- No L7/path-based routing
+- No TLS payload inspection at Router
+
+### TLS Modes Comparison
+
+| Feature | Edge | Re-encrypt | Passthrough |
+| --- | --- | --- | --- |
+| TLS terminated at Router | Yes | Yes | No |
+| TLS from Router to backend | No | Yes | Yes (client to backend directly) |
+| End-to-end encryption | No | Yes | Yes |
+| Performance profile | High | Medium | High |
+| Security level | Lower | High | Very high |
+| Best for | Simple apps | Secure apps | Advanced TLS workloads |
+
+---
+
+## 4. Lab: Create Routes
+
+### Edge route
+
+```bash
+oc create route edge my-route \
+  --service=my-service \
+  --hostname=app.example.com
+```
+
+### Re-encrypt route
+
+```bash
+oc create route reencrypt my-route \
+  --service=my-service \
+  --hostname=secure.example.com \
+  --cert=cert.pem \
+  --key=key.pem \
+  --dest-ca-cert=ca.pem
+```
+
+### Passthrough route
+
+```bash
+oc create route passthrough my-route \
+  --service=my-service \
+  --hostname=passthrough.example.com
+```
+
+---
+
+## 5. Debugging Scenarios
+
+### Route not working
+
+Run:
+
+```bash
+oc get route
+oc describe route <name>
+```
+
+### TLS issues
+
+Common causes:
+
+- Certificate mismatch
+- Invalid backend certificate (especially for re-encrypt)
+
+### HTTP 503 errors
+
+Possible cause: Service has no endpoints.
+
+Run:
+
+```bash
+oc get endpoints
+```
