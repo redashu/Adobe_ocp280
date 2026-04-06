@@ -217,5 +217,12 @@ The push refers to repository [adobe.azurecr.io/adobe]
 
 ```
 
+### Deploy pushed app 
+
+```
+oc  create  deployment  ashu-dep1 --image adobe.azurecr.io/adobe:ashuv1 --port 80 --dry-run=client  -o yaml  >ashudeploy_day1.yaml 
+
+```
+
 
 
