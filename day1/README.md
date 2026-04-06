@@ -235,6 +235,15 @@ apiVersion: v1
 data:
   .dockerconfigjson: eyJhdXRocyI6eyJhZG9iZS5henVyZWNyLmlvIjp7InVzZXJuYW1lIjoiYWRvYmUiLCJwYXNzd29yZCI6IjAxaDBnUGtCc0tFU3ZDWkE5OElpSjJLVUF5Wkc0dXdRMFdKSGVHRmNvYTVTc1dkaDVFbjlKUVFKOT
 
+
+====>
+
+ oc create  -f auzresecret.yaml 
+secret/ashu-azure-secret created
+[user12@ip-172-31-28-96 ~]$ 
+[user12@ip-172-31-28-96 ~]$ oc get secrets
+NAME                       TYPE                             DATA   AGE
+ashu-azure-secret          kubernetes.io/dockerconfigjson   1      4s
 ```
 
 
