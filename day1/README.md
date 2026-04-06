@@ -136,3 +136,45 @@ Annotations:      k8s.ovn.org/pod-networks:
 ```
 
 
+## Creating image and pushing to ACR 
+
+```
+git clone https://github.com/schoolofdevops/html-sample-app.git
+
+Cloning into 'html-sample-app'...
+remote: Enumerating objects: 74, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 74 (delta 0), reused 0 (delta 0), pack-reused 71 (from 1)
+Receiving objects: 100% (74/74), 1.38 MiB | 5.70 MiB/s, done.
+Resolving deltas: 100% (5/5), done.
+
+
+[user12@ip-172-31-28-96 ~]$ ls
+html-sample-app
+[user12@ip-172-31-28-96 ~]$ 
+
+[user12@ip-172-31-28-96 ~]$ ls
+html-sample-app
+[user12@ip-172-31-28-96 ~]$ 
+[user12@ip-172-31-28-96 ~]$ cd html-sample-app/
+[user12@ip-172-31-28-96 html-sample-app]$ ls
+LICENSE.txt  README.txt  assets  elements.html  generic.html  html5up-phantom.zip  images  index.html
+[user12@ip-172-31-28-96 html-sample-app]$ touch Dockerfile .dockerignore
+[user12@ip-172-31-28-96 html-sample-app]$ ls
+Dockerfile  LICENSE.txt  README.txt  assets  elements.html  generic.html  html5up-phantom.zip  images  index.html
+[user12@ip-172-31-28-96 html-sample-app]$ 
+[user12@ip-172-31-28-96 html-sample-app]$ 
+[user12@ip-172-31-28-96 html-sample-app]$ ls -a
+.  ..  .dockerignore  .git  Dockerfile  LICENSE.txt  README.txt  assets  elements.html  generic.html  html5up-phantom.zip  images  index.html
+[user12@ip-172-31-28-96 html-sample-app]$ 
+[user12@ip-172-31-28-96 html-sample-app]$ 
+
+==> update Dockerfile & .dockerignore 
+
+===>
+
+```
+
+
+
