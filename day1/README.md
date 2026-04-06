@@ -325,5 +325,19 @@ service/ashusvc1 created
 oc get svc
 NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 ashusvc1   ClusterIP   172.30.175.25   <none>        1234/TCP   6s
+
+===>
+
+oc get  ep 
+NAME       ENDPOINTS        AGE
+ashusvc1   10.131.0.38:80   2m34s
+
+
 ```
+
+### route 
+
+<img src="route1.png">
+
+
 
