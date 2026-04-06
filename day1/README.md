@@ -172,7 +172,48 @@ Dockerfile  LICENSE.txt  README.txt  assets  elements.html  generic.html  html5u
 
 ==> update Dockerfile & .dockerignore 
 
-===>
+===>Buidling container image
+
+docker build  -t  ashu:v1  .  
+[+] Building 3.1s (6/7)                                                                       docker:default
+ => [internal] load build definition from Dockerfile             
+
+ ====> docker images check 
+
+  docker images
+REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
+prakakum     v1        3bd5fa83f251   47 seconds ago       163MB
+anshul       v1        75ceb389a302   54 seconds ago       163MB
+
+
+===> Docker tag. 
+
+docker  tag  ashu:v1  adobe.azurecr.io/adobe:ashuv1
+[user12@ip-172-31-28-96 html-sample-app]$ docker images
+REPOSITORY                 TAG          IMAGE ID       CREATED         SIZE
+adobe.azurecr.io/adobe     prakakumv1   3bd5fa83f251   4 minutes ago   163MB
+prakakum                   v1           3bd5fa83f251   4 minutes ago   163MB
+
+
+===> login to Registry 
+
+docker login  adobe.azurecr.io 
+Username: adobe
+Password: 
+WARNING! Your password will be stored unencrypted in /home/user12/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+
+===> Docker push 
+
+ docker  push   adobe.azurecr.io/adobe:ashuv1
+The push refers to repository [adobe.azurecr.io/adobe]
+60b3d7fc8c16: Pushed 
+4e0a2a122e2f: Layer already exists 
+794b45c9a1a2: Layer already exists 
+
 
 ```
 
