@@ -260,6 +260,10 @@ NAME                         READY   STATUS             RESTARTS       AGE
 ashu-dep1-5d65f699d6-8xb42   1/1     Running            0              11s
 
 ```
+### COntainer networking 
+
+<img src="net1.png">
+
 
 
 
