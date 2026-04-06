@@ -265,5 +265,65 @@ ashu-dep1-5d65f699d6-8xb42   1/1     Running            0              11s
 <img src="net1.png">
 
 
+### checking pod ip 
 
+```
+$ oc get pod
+NAME                         READY   STATUS    RESTARTS   AGE
+ashu-dep1-5d65f699d6-8xb42   1/1     Running   0          112m
+[user12@ip-172-31-28-96 ~]$ oc get pod -owide
+NAME                         READY   STATUS    RESTARTS   AGE    IP            NODE                           NOMINATED NODE   READINESS GATES
+ashu-dep1-5d65f699d6-8xb42   1/1     Running   0          112m   10.131.0.38   ip-10-0-125-231.ec2.internal   <none>           <none>
+[user12@ip-172-31-28-96 ~]$ oc describe pod  ashu-dep1-5d65f699d6-8xb42 
+Name:             ashu-dep1-5d65f699d6-8xb42
+Namespace:        ashu-project
+
+```
+### login to pod 
+
+```
+oc get pod
+NAME                         READY   STATUS    RESTARTS   AGE
+ashu-dep1-5d65f699d6-8xb42   1/1     Running   0          119m
+[user12@ip-172-31-28-96 ~]$ 
+[user12@ip-172-31-28-96 ~]$ 
+[user12@ip-172-31-28-96 ~]$ oc rsh ashu-dep1-5d65f699d6-8xb42 
+# 
+# apt  update ; apt install net-tools   iputils-ping  
+
+==>
+
+ifconfig 
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 8901
+        inet 10.131.0.38  netmask 255.255.254.0  broadcast 10.131.1.255
+        inet6 fe80::858:aff:fe83:26  prefixlen 64  scopeid 0x20<link>
+        ether 0a:58:0a:83:00:26  txqueuelen 0  (Ethernet)
+        RX packets 604  bytes 10320140 (9.8 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 338  bytes 23758 (23.2 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0
+
+
+```
+
+### service concept 
+
+<img src="svc1.png">
+
+## creating service by exposing deployment 
+
+```
+oc  expose  deploy  ashu-dep1  --type ClusterIP --port  1234 --target-port 80 --name ashusvc1 --dry-run=client  -o yaml >svc1.yaml 
+
+
+===>
+oc create -f svc1.yaml 
+service/ashusvc1 created
+
+
+
+oc get svc
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+ashusvc1   ClusterIP   172.30.175.25   <none>        1234/TCP   6s
+```
 
