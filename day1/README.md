@@ -224,5 +224,17 @@ oc  create  deployment  ashu-dep1 --image adobe.azurecr.io/adobe:ashuv1 --port 8
 
 ```
 
+### Creating secret to store azure cr creds
+
+```
+oc create secret docker-registry ashu-azure-secret --docker-server="adobe.azurecr.io" --docker-username="adobe" --docker-password="sdgdfgdfg" --dry-run=client -o yaml  >auzresecret.yaml 
+[user12@ip-172-31-28-96 ~]$ ls
+ashudeploy_day1.yaml  auzresecret.yaml  html-sample-app
+[user12@ip-172-31-28-96 ~]$ cat  auzresecret.yaml 
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJhZG9iZS5henVyZWNyLmlvIjp7InVzZXJuYW1lIjoiYWRvYmUiLCJwYXNzd29yZCI6IjAxaDBnUGtCc0tFU3ZDWkE5OElpSjJLVUF5Wkc0dXdRMFdKSGVHRmNvYTVTc1dkaDVFbjlKUVFKOT
+
+```
 
 

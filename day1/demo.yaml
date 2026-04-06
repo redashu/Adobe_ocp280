@@ -1,0 +1,4 @@
+apiVersion:
+kind:
+Metadata:
+spec:  # container app related info 
