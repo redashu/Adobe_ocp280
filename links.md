@@ -11,3 +11,11 @@ https://github.com/schoolofdevops/html-sample-app.git
 https://github.com/containernetworking/cni.git
 
 ```
+
+
+### network policy 
+
+```
+https://kubernetes.io/docs/concepts/services-networking/network-policies/
+
+```
