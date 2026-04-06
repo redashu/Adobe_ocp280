@@ -340,4 +340,26 @@ ashusvc1   10.131.0.38:80   2m34s
 <img src="route1.png">
 
 
+### kind of routes
 
+
+<img src="route2.png">
+
+### expsoing svc to create routes 
+
+```
+ oc get svc
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+ashusvc1   ClusterIP   172.30.175.25   <none>        1234/TCP   82m
+[user12@ip-172-31-28-96 ~]$ 
+
+
+ oc expose svc  ashusvc1
+route/ashusvc1 exposed
+[user12@ip-172-31-28-96 ~]$ oc get routes
+NAME       HOST/PORT                                            PATH   SERVICES   PORT   TERMINATION   WILDCARD
+ashusvc1   ashusvc1-ashu-project.apps.mayank.openshiftlab.xyz          ashusvc1   80                   None
+[user12@ip-172-31-28-96 ~]$ oc get routes
+
+
+```
