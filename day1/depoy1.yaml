@@ -17,6 +17,8 @@ spec:
       labels:
         app: ashu-dep1
     spec:
+      imagePullSecrets:
+      - name: ashu-azure-secret
       containers:
       - image: adobe.azurecr.io/adobe:ashuv1
         name: adobe

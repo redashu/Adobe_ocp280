@@ -246,4 +246,20 @@ NAME                       TYPE                             DATA   AGE
 ashu-azure-secret          kubernetes.io/dockerconfigjson   1      4s
 ```
 
+### update deployment YAML and deploy it 
+
+```
+oc create -f ashudeploy_day1.yaml 
+deployment.apps/ashu-dep1 created
+[user12@ip-172-31-28-96 ~]$ 
+[user12@ip-172-31-28-96 ~]$ oc get deploy 
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   0/1     1            0           4s
+[user12@ip-172-31-28-96 ~]$ oc get po
+NAME                         READY   STATUS             RESTARTS       AGE
+ashu-dep1-5d65f699d6-8xb42   1/1     Running            0              11s
+
+```
+
+
 
