@@ -94,3 +94,27 @@ ashudb   10.131.0.64:3306   10s
 
 ```
 
+## Deploy webapp
+
+```
+ oc create  deployment  ashu-web  --image adobe.azurecr.io/adobe:adminer    --port 8080 --dry-run=client -o yaml >web-deploy.yaml
+
+ ===> update yaml file 
+
+ oc create -f web-deploy.yaml 
+deployment.apps/ashu-web created
+[user12@ip-172-31-28-96 2twebapp]$ oc get deploy
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-web   0/1     1            0           10s
+ashudb     1/1     1            1           22m
+[user12@ip-172-31-28-96 2twebapp]$ oc get po
+NAME                        READY   STATUS    RESTARTS   AGE
+ashu-web-5b444dd958-6sqdf   1/1     Running   0          10s
+ashudb-5c595986bb-wjshq     1/1     Running   0          22m
+[user12@ip-172-31-28-96 2twebapp]$ 
+
+
+
+```
+
+

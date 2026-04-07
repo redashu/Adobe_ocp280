@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-web
+  name: ashu-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-web
+    spec:
+      imagePullSecrets: # This is the section where we specify the image pull secret for private registry authentication
+      - name: ashu-azure-secret 
+      containers:
+      - image: adobe.azurecr.io/adobe:adminer
+        name: adobe
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
