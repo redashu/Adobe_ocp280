@@ -1,0 +1,260 @@
+# MySQL Backup with Kubernetes CronJob
+
+## Architecture
+
+```text
+MySQL Deployment
+  -> Service (mysql-service)
+    -> CronJob (every 5 minutes)
+      -> Job -> Pod
+        -> mysqldump
+          -> PVC (gp3-csi -> AWS EBS)
+```
+
+## Step 1: Create PVC (gp3-csi)
+
+### PVC Manifest
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp3-csi
+  resources:
+    requests:
+      storage: 5Gi
+```
+
+Apply:
+
+```bash
+oc apply -f pvc.yaml
+```
+
+Check:
+
+```bash
+oc get pvc
+```
+
+Expected:
+
+- Status is initially Pending
+- It binds when a pod starts using the PVC
+
+## Step 2: Create MySQL Deployment and Service
+
+### MySQL Deployment Manifest
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: rootpass
+            - name: MYSQL_DATABASE
+              value: mydb
+          ports:
+            - containerPort: 3306
+```
+
+Apply and expose:
+
+```bash
+oc apply -f mysql-deployment.yaml
+oc expose deployment mysql --port=3306 --name=mysql-service
+```
+
+## Step 3: Insert Sample Data
+
+```bash
+oc get pods
+oc exec -it <mysql-pod> -- mysql -uroot -prootpass
+```
+
+Inside MySQL shell:
+
+```sql
+CREATE TABLE test (id INT, name VARCHAR(50));
+INSERT INTO test VALUES (1, 'ashu');
+```
+
+## Step 4: Create Secret for Credentials
+
+```bash
+oc create secret generic mysql-secret \
+  --from-literal=username=root \
+  --from-literal=password=rootpass
+```
+
+## Step 5: Create CronJob
+
+### CronJob Manifest
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mysql-backup
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup
+              image: mysql:8
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  TIMESTAMP=$(date +%F-%H-%M-%S)
+                  mysqldump -h mysql-service -u$MYSQL_USER -p$MYSQL_PASSWORD mydb \
+                  | gzip > /backup/db-$TIMESTAMP.sql.gz
+              env:
+                - name: MYSQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: mysql-secret
+                      key: username
+                - name: MYSQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mysql-secret
+                      key: password
+              volumeMounts:
+                - name: backup-volume
+                  mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup-volume
+              persistentVolumeClaim:
+                claimName: backup-pvc
+```
+
+Apply:
+
+```bash
+oc apply -f cronjob.yaml
+```
+
+## Step 6: Verify End-to-End
+
+Check CronJob:
+
+```bash
+oc get cronjob
+```
+
+Check Jobs:
+
+```bash
+oc get jobs
+```
+
+Check Pods:
+
+```bash
+oc get pods
+```
+
+Check PVC binding:
+
+```bash
+oc get pvc
+```
+
+Expected:
+
+- PVC status becomes Bound
+
+Check PV:
+
+```bash
+oc get pv
+```
+
+Expected:
+
+- AWS EBS volume is provisioned
+
+Verify backup files:
+
+```bash
+oc exec -it <backup-pod> -- ls /backup
+```
+
+Sample output:
+
+```text
+db-2026-04-07-10-05-00.sql.gz
+db-2026-04-07-10-10-00.sql.gz
+```
+
+## Important Storage Behavior
+
+Because reclaim policy is Delete:
+
+If you delete PVC:
+
+```bash
+oc delete pvc backup-pvc
+```
+
+Then:
+
+- PVC is deleted
+- PV is deleted
+- AWS EBS volume is deleted
+- Backup data is lost
+
+If a pod is deleted:
+
+- Pod is deleted
+- PVC remains
+- PV remains
+- Data remains safe
+
+## Production Improvements
+
+- Add retention cleanup:
+
+```bash
+find /backup -type f -mtime +7 -delete
+```
+
+- Use S3 instead of PVC for long-term retention
+- Add resource requests and limits
+- Add alerting for job failures
+
+## Final Mental Model
+
+```text
+CronJob triggers -> Job -> Pod
+                  -> mysqldump runs
+                  -> writes to PVC (gp3-csi -> EBS)
+                  -> persistent backup storage
+```
