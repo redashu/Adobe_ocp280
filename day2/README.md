@@ -69,4 +69,28 @@ mysql>
 
 ```
 
+### Creating service for DB 
+
+```
+user12@ip-172-31-28-96 2twebapp]$ ls
+db-deploy.yaml  dbsecret.yaml
+[user12@ip-172-31-28-96 2twebapp]$ oc  get deploy
+NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+ashudb   1/1     1            1           11m
+[user12@ip-172-31-28-96 2twebapp]$ oc  expose deploy ashudb --port 3306 --dry-run=client -o yaml >dbsvc.yml
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ oc create -f dbsvc.yml 
+service/ashudb created
+[user12@ip-172-31-28-96 2twebapp]$ oc get svc
+NAME     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+ashudb   ClusterIP   172.30.66.208   <none>        3306/TCP   4s
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ oc get ep 
+NAME     ENDPOINTS          AGE
+ashudb   10.131.0.64:3306   10s
+[user12@ip-172-31-28-96 2twebapp]$ 
+
+
+```
 
