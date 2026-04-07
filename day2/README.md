@@ -40,6 +40,32 @@ NAME                      READY   STATUS    RESTARTS   AGE
 ashudb-5c595986bb-wjshq   1/1     Running   0          26s
 [user12@ip-172-31-28-96 2twebapp]$ 
 
+===> connecting to Db 
+
+[user12@ip-172-31-28-96 ~]$ oc get po 
+NAME                      READY   STATUS    RESTARTS   AGE
+ashudb-5c595986bb-wjshq   1/1     Running   0          6m10s
+[user12@ip-172-31-28-96 ~]$ oc rsh  ashudb-5c595986bb-wjshq 
+sh-5.1# 
+sh-5.1# 
+sh-5.1# 
+sh-5.1# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 9.6.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> 
+
+
 
 ```
 
