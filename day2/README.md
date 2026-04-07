@@ -23,6 +23,24 @@ ashu-db-creds              Opaque                           1      6s
 ===> creating  deployment 
 
 oc create  deployment  ashudb --image adobe.azurecr.io/adobe:mysql --port  3306  --dry-run=client -o yaml >db-deploy.yaml
+
+
+===> update the yaml with secret & env 
+
+[user12@ip-172-31-28-96 2twebapp]$ oc create -f db-deploy.yaml 
+deployment.apps/ashudb created
+[user12@ip-172-31-28-96 2twebapp]$ oc get deploy
+NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+ashudb   1/1     1            1           17s
+[user12@ip-172-31-28-96 2twebapp]$ oc get rs
+NAME                DESIRED   CURRENT   READY   AGE
+ashudb-5c595986bb   1         1         1       23s
+[user12@ip-172-31-28-96 2twebapp]$ oc get pod
+NAME                      READY   STATUS    RESTARTS   AGE
+ashudb-5c595986bb-wjshq   1/1     Running   0          26s
+[user12@ip-172-31-28-96 2twebapp]$ 
+
+
 ```
 
 

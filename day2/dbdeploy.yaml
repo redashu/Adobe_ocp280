@@ -23,11 +23,11 @@ spec:
       - image: adobe.azurecr.io/adobe:mysql
         name: adobe
         env:
-        - name: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_ROOT_PASSWORD # env name 
           valueFrom:
             secretKeyRef:
-              name: ashu-db-creds
-              key: mypass
+              name: ashu-db-creds # secret name 
+              key: mypass # key name 
         ports:
         - containerPort: 3306
         resources: {}
