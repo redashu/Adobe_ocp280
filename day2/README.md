@@ -114,6 +114,62 @@ ashudb-5c595986bb-wjshq     1/1     Running   0          22m
 [user12@ip-172-31-28-96 2twebapp]$ 
 
 
+===> creating service 
+
+user12@ip-172-31-28-96 2twebapp]$ oc get  deploy
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-web   1/1     1            1           2m48s
+ashudb     1/1     1            1           25m
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ oc  expose deploy ashu-web   --port  8080 --dry-run=client -o yaml >web-svc.yaml 
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ oc create -f web-svc.yaml 
+service/ashu-web created
+[user12@ip-172-31-28-96 2twebapp]$ oc get  svc
+NAME       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+ashu-web   ClusterIP   172.30.240.136   <none>        8080/TCP   6s
+ashudb     ClusterIP   172.30.66.208    <none>        3306/TCP   15m
+[user12@ip-172-31-28-96 2twebapp]$ oc get  ep
+NAME       ENDPOINTS          AGE
+ashu-web   10.129.2.49:8080   10s
+ashudb     10.131.0.64:3306   15m
+[user12@ip-172-31-28-96 2twebapp]$ 
+
+
+===> creating route 
+
+oc  expose  svc ashu-web  --dry-run=client -o yaml
+apiVersion: v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-web
+  name: ashu-web
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: ""
+    name: ashu-web
+    weight: null
+status: {}
+[user12@ip-172-31-28-96 2twebapp]$ oc  expose  svc ashu-web  --dry-run=client -o yaml >route.yaml
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ oc create -f route.yaml 
+error: resource mapping not found for name: "ashu-web" namespace: "" from "route.yaml": no matches for kind "Route" in version "v1"
+ensure CRDs are installed first
+[user12@ip-172-31-28-96 2twebapp]$ oc  expose  svc ashu-web  
+route/ashu-web exposed
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ oc get  route
+NAME       HOST/PORT                                            PATH   SERVICES   PORT   TERMINATION   WILDCARD
+ashu-web   ashu-web-ashu-project.apps.mayank.openshiftlab.xyz          ashu-web   8080                 None
+[user12@ip-172-31-28-96 2twebapp]$ 
+[user12@ip-172-31-28-96 2twebapp]$ 
+
 
 ```
 
