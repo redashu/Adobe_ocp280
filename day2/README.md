@@ -178,3 +178,65 @@ ashu-web   ashu-web-ashu-project.apps.mayank.openshiftlab.xyz          ashu-web 
 
 <img src="role1.png">
 
+## TASK rbac
+
+### creating 
+
+```
+[root@openshift ashu]# oc whoami
+kube:admin
+[root@openshift ashu]# oc  new-project  ashu-task
+Now using project "ashu-task" on server "https://api.mayank.openshiftlab.xyz:6443".
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app rails-postgresql-example
+
+to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.43 -- /agnhost serve-hostname
+
+[root@openshift ashu]# oc  project
+Using project "ashu-task" on server "https://api.mayank.openshiftlab.xyz:6443".
+[root@openshift ashu]# oc get  sa
+NAME       SECRETS   AGE
+builder    1         19s
+default    1         19s
+deployer   1         19s
+[root@openshift ashu]# 
+
+
+
+===> creating sa
+
+oc create serviceaccount  ashu --dry-run=client -oyaml 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: null
+  name: ashu
+[root@openshift ashu]# oc create serviceaccount  ashu
+serviceaccount/ashu created
+[root@openshift ashu]# oc get  sa
+NAME       SECRETS   AGE
+ashu       1         4s
+builder    1         93s
+default    1         93s
+deployer   1         93s
+[root@openshift ashu]# 
+
+
+
+===> creating role 
+
+oc create role pod-manager --verb=get,list,watch,create,delete,patch  --resource=pods --dry-run=client  -o yaml >role1.yaml
+[root@openshift ashu]# oc create -f role1.yaml 
+role.rbac.authorization.k8s.io/pod-manager created
+[root@openshift ashu]# 
+[root@openshift ashu]# 
+[root@openshift ashu]# oc get roles
+NAME          CREATED AT
+pod-manager   2026-04-07T10:23:43Z
+[root@openshift ashu]# 
+
+```
