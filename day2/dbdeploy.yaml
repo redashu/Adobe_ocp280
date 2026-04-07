@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashudb
+  name: ashudb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashudb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashudb
+    spec:
+      imagePullSecrets: # This is the section where we specify the image pull secret for private registry authentication
+      - name: ashu-azure-secret 
+      containers:
+      - image: adobe.azurecr.io/adobe:mysql
+        name: adobe
+        ports:
+        - containerPort: 3306
+        resources: {}

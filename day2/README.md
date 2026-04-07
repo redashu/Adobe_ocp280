@@ -19,6 +19,10 @@ NAME                       TYPE                             DATA   AGE
 ashu-azure-secret          kubernetes.io/dockerconfigjson   1      23h
 ashu-db-creds              Opaque                           1      6s
 
+
+===> creating  deployment 
+
+oc create  deployment  ashudb --image adobe.azurecr.io/adobe:mysql --port  3306  --dry-run=client -o yaml >db-deploy.yaml
 ```
 
 
