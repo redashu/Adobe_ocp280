@@ -26,3 +26,8 @@ https://kubernetes.io/docs/concepts/services-networking/network-policies/
 https://github.com/redashu/ocp4-metal-install
 
 ```
+### openshift mirror 
+
+```
+https://mirror.openshift.com/pub
+```
