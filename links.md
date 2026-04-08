@@ -31,3 +31,10 @@ https://github.com/redashu/ocp4-metal-install
 ```
 https://mirror.openshift.com/pub
 ```
+
+### OKD project 
+
+```
+https://github.com/okd-project/okd
+
+```
