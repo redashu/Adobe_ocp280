@@ -19,3 +19,10 @@ https://github.com/containernetworking/cni.git
 https://kubernetes.io/docs/concepts/services-networking/network-policies/
 
 ```
+
+### Install bare-metal ocp 
+
+```
+https://github.com/redashu/ocp4-metal-install
+
+```
