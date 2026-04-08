@@ -143,3 +143,54 @@ ad8c7604a1e74       a3ecd26c734662caa005f5b33c3040cbd875351006fae7b15f21573e6b2f
 
 
 
+### using ocdebug to create db 
+
+```
+[user12@ip-172-31-28-96 ~]$ oc debug  node/ip-10-0-87-190.ec2.internal 
+Temporary namespace openshift-debug-nfzsp is created for debugging node...
+Starting pod/ip-10-0-87-190ec2internal-debug-2ctnn ...
+To use host binaries, run `chroot /host`
+Pod IP: 10.0.87.190
+If you don't see a command prompt, try pressing enter.
+sh-5.1# chroot /host
+sh-5.1# crictl ps   | grep -i ashu
+2df6cdd774ce0       a3ecd26c734662caa005f5b33c3040cbd875351006fae7b15f21573e6b2fef27                                                                    3 hours ago          Running             adobe                                0                   ac8f3fec8fa0c       ashudb-6d657fcb98-kp96t
+sh-5.1# crictl exec -it 2df6cdd774ce0 /bin/bash 
+bash-5.1# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 14
+Server version: 9.6.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database hello;
+Query OK, 1 row affected (0.007 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| hello              |
+| hellodb            |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+6 rows in set (0.001 sec)
+
+mysql> exit;
+Bye
+bash-5.1# exit
+exit
+sh-5.1# exit
+
+
+```
