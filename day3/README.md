@@ -43,3 +43,8 @@ ashu-web-5b444dd958-rg57h   1/1     Running   1          21h
 ashudb-6d657fcb98-kp96t     1/1     Running   0          20s
 
 ```
+
+## example to implement 
+
+<img src="demo1.png">
+
