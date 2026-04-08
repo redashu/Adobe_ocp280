@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+	name: nginx-pod-pvc-user
+	labels:
+		app: nginx-pod-pvc-user
+spec:
+  volumes: 
+  - name: ashu-vol1 
+    persistentVolumeClaim: 
+      claimName: ashu-pvc
+  - name: ashvol2 
+    nfs: 
+      server: 86.67.7.7
+      path: /data
+	containers:
+		- name: nginx
+			image: nginx:1.27
+			ports:
+				- containerPort: 80
+      volumeMounts:
+        - name: ashu-vol1
+          mountPath: /usr/share/nginx/html
+        
+			

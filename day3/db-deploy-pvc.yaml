@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashudb
+  name: ashudb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashudb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashudb
+    spec:
+      imagePullSecrets:
+      - name: ashu-azure-secret
+      volumes:
+      - name: ashu-vol1 
+        persistentVolumeClaim:
+          claimName: ashu-pvc
+      containers:
+      - image: adobe.azurecr.io/adobe:mysql
+        name: adobe
+        env:
+        - name: MYSQL_ROOT_PASSWORD # env name 
+          valueFrom:
+            secretKeyRef:
+              name: ashu-db-creds # secret name 
+              key: mypass # key name
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: ashu-vol1
+          mountPath: /var/lib/mysql/
+        resources: {}
+status: {}
