@@ -9,12 +9,20 @@ spec:
   serviceAccountName: adobe
   imagePullSecrets:
   - name: ashu-azure-secret
+  volumes:
+  - name: ashu-azure-secret
+    persistentVolumeClaim:
+      claimName: ashu-azure-secret
   containers:
   - command:
     - sleep
     - "1000"
     image: adobe.azurecr.io/adobe:alpine
     name: ashupod1
+    volumeMounts:
+    - mountPath: /etc/secret-volume
+      name: ashu-azure-secret
+      readOnly: true
     resources: {}
   dnsPolicy: ClusterFirst
   restartPolicy: Always
