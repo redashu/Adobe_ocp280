@@ -2,6 +2,8 @@
 
 ## Architecture
 
+<img src="install.png">
+
 ### Cluster Layout
 
 ```text
